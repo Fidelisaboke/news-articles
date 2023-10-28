@@ -1,0 +1,75 @@
+// News API
+const articlesUrl =
+  "https://newsapi.org/v2/top-headlines?country=us&apiKey=44eca781d6fb4e2da8fd8e7969b3b375";
+
+// Temporary backup file
+const articlesBackup = "news_backup.json";
+
+// the 'View Articles' button
+const btnArticles = document.querySelector("#btn-articles");
+
+// The 'Articles' section
+const articlesSection = document.querySelector(".news-articles");
+
+// Function that fetches JSONs from APIs - using promises (fetch)
+function getJSON(apiUrl) {
+    fetch(apiUrl)
+        .then((response) => response.json())
+        .then(displayArticles)
+        .catch(error =>{
+            console.error(`An error occured: ${error} `);
+        })
+}
+
+// Display the articles
+function displayArticles(newsObject) {
+    const articles = newsObject.articles;
+    for (let article of articles) {
+      const articleElement = document.createElement("article");
+      articlesSection.appendChild(articleElement);
+  
+      // Removing the 'chars' from the content
+      let pattern = /\[\+\d+ chars\]/; // Regex - mathces '[+... chars]'
+      let articleContent = article.content;
+      if(articleContent !== null){
+          articleContent = article.content.replace(pattern, "");
+      }
+      else{
+        articleContent = '';
+      }
+  
+      // Remove 'T' and 'Z' from publishedAt
+      let articlePublishedAt = article.publishedAt;
+      if(articlePublishedAt !== null){
+        articlePublishedAt = article.publishedAt.replace('T', ' (Time: ').replace('Z', ')');
+      }
+      else{
+        articlePublishedAt = '';
+      }
+  
+      let articleAnchor = `<a href="${article.url}" title="Read more">Read more</a>`;
+      
+      // HTML content
+      articleElement.innerHTML = `
+          <h1>${article.title}</h1>
+          <img src="${article.urlToImage}"><br>
+          <span><b>Author(s):</b> ${article.author}</span></br>
+          <span><b>Source ID:</b> ${article.source.id}</span><br>
+          <span><b>Source Name:</b> ${article.source.name}</span><br>
+          <span><b>Published at:</b> ${articlePublishedAt}<span><br><br>
+          <span><b>Description:</b> ${article.description}</span><br><br>
+          </span><b>Content:</b> ${articleContent}${articleAnchor}</span><br>
+          `;
+    }
+  }
+  
+  // Event listeners
+  btnArticles.addEventListener("click", (e) => {
+    e.target.textContent= 'Loading...';
+
+    setTimeout(() => {
+      getJSON(articlesUrl);
+      e.target.remove(); // Remove the button
+    }, 1000);
+  });
+  
