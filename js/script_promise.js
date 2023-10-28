@@ -1,6 +1,6 @@
 // News API
 const articlesUrl =
-  "https://newsapi.org/v2/top-headlines?country=us&apiKey=44eca781d6fb4e2da8fd8e7969b3b375";
+  "https://newsapi.org/v2/top-headlines?country=us&apiKey=a60b30113efe4358b2ec57a610c4a5a8";
 
 // Temporary backup file
 const articlesBackup = "news_backup.json";
